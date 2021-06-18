@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 st.set_page_config(layout="wide")
 
-from playables.data_dissect import load_data_dissect
+from playables.DataDissect.data_dissect import load_data_dissect
 
 def display_homepage():
     st.write('Welcome to Project Sandbox!')
