@@ -24,8 +24,6 @@ def fix_missing_values(df):
             if confirm:
                 newdf = df.head()
                 newdf.to_csv('newdata.csv')
-                with container:
-                    st.write('Dataset has been updated!')
 
 def convert_datatype(df):
     pass
