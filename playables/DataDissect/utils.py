@@ -20,8 +20,11 @@ def parse_pandas_info(info):
     info_df = pd.DataFrame({'Columns': col, 'Non-Null Count': count, 'Dtype': dtype})
     return info_df, basic_info, end_info
 
-def display_dataset_info(df, without_summary=False):
-    st.subheader('Uploaded Dataset Sample:')
+def display_dataset_info(df, without_summary=False, subheader=None):
+    if subheader:
+        st.subheader(subheader)
+    else:
+        st.subheader('Uploaded Dataset Sample:')
     st.write(df.head())
     #Since the df.info() prints directly to the console, so we are using an
     # IO buffer to store the output as a string which can further be converted into a Pandas DataFrame
