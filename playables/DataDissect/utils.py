@@ -43,6 +43,12 @@ def display_dataset_info(df, without_summary=False, subheader=None):
         for info in footers:
             st.write("**_" + info + "_**")
 
+def get_func_to_fill(method):
+    if method == 'mean':
+        return np.mean
+    elif method == 'median':
+        return np.median
+
 def display_data_dissect_info():
     st.title('Welcome to Data Dissect!')
     st.subheader('Pre-process your dataset without any code and visualize any/all relationships you want to!')
