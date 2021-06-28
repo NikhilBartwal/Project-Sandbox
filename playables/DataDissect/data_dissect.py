@@ -5,17 +5,18 @@ import streamlit as st
 
 from playables.DataDissect.utils import *
 from playables.DataDissect.preprocess import pre_process_data
+from playables.DataDissect.utils import load_df, save_df
 from matplotlib import pyplot as plt
 
 def visualize_data():
     pass
-    
+
 def load_data_dissect():
     welcome_container = st.beta_container()
     file = st.file_uploader('Upload a csv dataset here (Max Size Limit: 150MBs)', type=['csv'])
     #Start the analysis only when the user has uploaded a dataset
     if file:
-        df = pd.read_csv(file)
+        df = load_df(startup=True, initial_data=file)
         data_options = ['Display Original Dataset',
                         'Pre-process data',
                         'Visualizations']
