@@ -73,14 +73,21 @@ def get_func_to_fill(method):
     elif method == 'median':
         return np.nanmedian
 
-def update_custom_values(new_df, columns_to_fill, feature_fill_methods, feature_static_values):
-    df_dtypes = dict(new_df.dtypes)
+def update_custom_values(
+    new_df,
+    columns_to_fill,
+    feature_fill_methods,
+    feature_static_values,
+    feature_drop_values
+):
     for column in columns_to_fill:
-        #Fill all the mean/median ones individually
+        #Fill all the mean/median/drop ones individually
         if column in feature_fill_methods.keys():
             func = get_func_to_fill(feature_fill_methods[column])
-            st.write('Filling', column, 'with', func(new_df[column]))
             new_df[column].fillna(func(new_df[column]), inplace=True, downcast='infer')
+        elif column in feature_drop_values.keys():
+            #Drop the rows that have the specified column NULL
+            new_df = new_df[new_df[column].notnull()]
     #Fill all the static values in one go
     new_df.fillna(feature_static_values, inplace=True, downcast='infer')
     return new_df
