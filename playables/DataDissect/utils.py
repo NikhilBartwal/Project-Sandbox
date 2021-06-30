@@ -58,6 +58,7 @@ def load_df(startup=False, initial_data=None, curr_df=None):
 
 def save_df(df):
     df.to_csv('new_df.csv', index=False)
+    st.experimental_rerun()
 
 def clear_cache():
     try:
@@ -66,12 +67,27 @@ def clear_cache():
     except:
         st.warning('No current cache found!')
 
+def calc_column_mode(df_col):
+    #Return the value with the highest count amongst all
+    return df_col.value_counts().index[0]
+
 def get_func_to_fill(method):
     method = method.lower()
     if method in 'mean':
         return np.mean
     elif method == 'median':
         return np.nanmedian
+    elif method == 'mode':
+        return calc_column_mode
+
+def get_feature_info(df):
+    missing_info = df.isnull().sum()
+    num_features = list(df.select_dtypes(exclude='number').columns.values)
+    cat_features = list(df.select_dtypes(include='object').columns.values)
+    bool_features = list(df.select_dtypes(include='bool').columns.values)
+
+    feature_type = {'num': num_features, 'cat': cat_features, 'bool': bool_features}
+    return missing_info, feature_type
 
 def update_custom_values(
     new_df,
@@ -85,7 +101,7 @@ def update_custom_values(
         if column in feature_fill_methods.keys():
             func = get_func_to_fill(feature_fill_methods[column])
             new_df[column].fillna(func(new_df[column]), inplace=True, downcast='infer')
-        elif column in feature_drop_values.keys():
+        elif column in feature_drop_values:
             #Drop the rows that have the specified column NULL
             new_df = new_df[new_df[column].notnull()]
     #Fill all the static values in one go
