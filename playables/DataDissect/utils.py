@@ -89,25 +89,6 @@ def get_feature_info(df):
     feature_type = {'num': num_features, 'cat': cat_features, 'bool': bool_features}
     return missing_info, feature_type
 
-def update_custom_values(
-    new_df,
-    columns_to_fill,
-    feature_fill_methods,
-    feature_static_values,
-    feature_drop_values
-):
-    for column in columns_to_fill:
-        #Fill all the mean/median/drop ones individually
-        if column in feature_fill_methods.keys():
-            func = get_func_to_fill(feature_fill_methods[column])
-            new_df[column].fillna(func(new_df[column]), inplace=True, downcast='infer')
-        elif column in feature_drop_values:
-            #Drop the rows that have the specified column NULL
-            new_df = new_df[new_df[column].notnull()]
-    #Fill all the static values in one go
-    new_df.fillna(feature_static_values, inplace=True, downcast='infer')
-    return new_df
-
 def display_data_dissect_info():
     st.title('Welcome to Data Dissect!')
     st.subheader('Pre-process your dataset without any code and visualize any/all relationships you want to!')
