@@ -82,7 +82,7 @@ def get_func_to_fill(method):
 
 def get_feature_info(df):
     missing_info = df.isnull().sum()
-    num_features = list(df.select_dtypes(exclude='number').columns.values)
+    num_features = list(df.select_dtypes(include='number').columns.values)
     cat_features = list(df.select_dtypes(include='object').columns.values)
     bool_features = list(df.select_dtypes(include='bool').columns.values)
 

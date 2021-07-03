@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from playables.DataDissect.utils import display_dataset_info, get_func_to_fill
-from playables.DataDissect.utils import load_df, save_df, clear_cache
+from playables.DataDissect.utils import load_df, save_df, clear_cache, get_feature_info
 from playables.DataDissect.preprocess_logic import update_custom_values, fix_missing_values_with
 
 def fix_missing_values(df, missing_info, feature_type):
@@ -26,7 +26,7 @@ def fix_missing_values(df, missing_info, feature_type):
                             ]
             fix_option = st.radio('How to fill the dataset NULL values?', fix_options)
 
-        fix_missing_values_with(df, fix_option.lower(), num_features, cat_features)
+        fix_missing_values_with(df, fix_option.lower(), num_features, cat_features, bool_features)
     else:
         st.write('There are no missing values in the dataset!')
 
@@ -34,6 +34,8 @@ def convert_datatype(df, feature_type):
     num_features, cat_features, bool_features = feature_type.values()
     all_features = num_features + cat_features + bool_features
     dtypes = df.dtypes
+    st.write(dtypes)
+
     conversion_options = {
         'int': ['No Change', 'float', 'str'],
         'float': ['No Change', 'int', 'str'],
@@ -58,7 +60,7 @@ def convert_datatype(df, feature_type):
 
         update = st.form_submit_button('Update Dataset')
         if update:
-            new_df = convert_datatype_with(df, feature_selections, feature_types)
+            new_df = convert_datatype_with(df, feature_selections, feature_types, all_features)
             save_df(new_df)
 
 def handle_categorical(df):

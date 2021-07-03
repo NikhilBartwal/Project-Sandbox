@@ -3,11 +3,11 @@ import streamlit as st
 
 from playables.DataDissect.utils import save_df, get_func_to_fill
 
-def fix_missing_values_with(df, method, num_features=None, cat_features=None):
+def fix_missing_values_with(df, method, num_features=None, cat_features=None, bool_features=None):
     #This is the function that actually fills the NULL values with the specified method
     # and saves an updated dataset state
     new_df = df.copy()
-    columns_to_fill = num_features + cat_features
+    columns_to_fill = num_features + cat_features + bool_features
 
     if method == 'drop':
         st.write('This change is ir-reversible, so please confirm your choice!')
@@ -17,8 +17,7 @@ def fix_missing_values_with(df, method, num_features=None, cat_features=None):
             new_df.dropna(inplace=True)
 
         save_df(new_df)
-
-    if method != 'custom':
+    elif method != 'custom':
         # Usin the same template for mean, median over entire dataframe
         st.write(f'Use {method} to fill up all the null values in the dataset?')
         confirm_update = st.button('Update')
@@ -102,3 +101,35 @@ def update_custom_values(
     #Fill all the static values in one go
     new_df.fillna(feature_static_values, inplace=True, downcast='infer')
     return new_df
+
+def get_func_convert(feature_type):
+    feature_type = feature_type.lower()
+
+    if feature_type == 'no change':
+        return
+    elif feature_type == 'int':
+        return int
+    elif feature_type == 'float':
+        return float
+    elif feature_type == 'str':
+        return str
+
+def check_compatibility(col_values, change_from, change_to):
+    if change_from != 'str':
+        return True
+    else:
+        #Str can be converted to int/float only if all the str values are actually numerical
+        for value in col_values:
+            if not value.isnumeric():
+                return False
+        return True
+def convert_datatype_with(df, feature_selections, feature_types, all_features):
+    for feature_name in all_features:
+        change_from = feature_types[feature_name]
+        change_to = feature_selections[feature_name]
+
+        if check_compatibility(df[feature_name].value_counts().index, change_from, change_to):
+            func = get_func_convert(change_to)
+            if func is not None:
+                df[feature_name] = df[feature_name].apply(lambda x: func(x))
+    return df
