@@ -4,6 +4,7 @@ import streamlit as st
 from playables.DataDissect.utils import display_dataset_info, get_func_to_fill
 from playables.DataDissect.utils import load_df, save_df, clear_cache, get_feature_info
 from playables.DataDissect.preprocess_logic import update_custom_values, fix_missing_values_with
+from playables.DataDissect.preprocess_logic import convert_datatype_with, get_feature_types
 
 def fix_missing_values(df, missing_info, feature_type):
     container = st.beta_container()
@@ -52,15 +53,14 @@ def convert_datatype(df, feature_type):
             with feature_container:
                 st.write(f'**{feature_name}**')
             with type_container:
-                st.write(type, '--->')
+                st.write(f'Current Datatype: *{type}*')
             with convert_box:
-                type_select = st.selectbox('', conversion_options[type])
+                type_select = st.selectbox('', conversion_options[type], key=feature_name)
                 feature_selections[feature_name] = type_select
         st.write('This step is ir-reversible. Please check the selections and click Update')
-
         update = st.form_submit_button('Update Dataset')
         if update:
-            new_df = convert_datatype_with(df, feature_selections, feature_types, all_features)
+            convert_datatype_with(df, feature_selections, feature_types, all_features)
             save_df(new_df)
 
 def handle_categorical(df):
@@ -91,9 +91,9 @@ def pre_process_data(df):
             st.write("\n\n\n\n")
             st.write('Sometimes, we might have to convert the datatype of certain\
             variables to use them.')
-            convert_datatype(df, feature_type)
+        convert_datatype(df, feature_type)
     elif todo == options[3]:
         with option_description:
             st.write("\n\n\n\n")
             st.write('Convert categorical data into its numeric counterpart')
-            handle_categorical(df)
+        handle_categorical(df)

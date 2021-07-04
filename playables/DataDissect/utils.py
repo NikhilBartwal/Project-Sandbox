@@ -50,19 +50,19 @@ def load_df(startup=False, initial_data=None, curr_df=None):
         return df
     else:
         try:
-            curr_df = pd.read_csv('new_df.csv')
+            curr_df = pd.read_pickle('new_df.pkl')
             st.warning('Currently running on cache! Please use the `Clear Cache` button to use the original dataset')
         except:
             pass
     return curr_df
 
 def save_df(df):
-    df.to_csv('new_df.csv', index=False)
+    df.to_pickle('new_df.pkl')
     st.experimental_rerun()
 
 def clear_cache():
     try:
-        os.remove('new_df.csv')
+        os.remove('new_df.pkl')
         st.experimental_rerun()
     except:
         st.warning('No current cache found!')
