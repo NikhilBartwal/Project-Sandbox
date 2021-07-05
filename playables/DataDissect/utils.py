@@ -51,7 +51,7 @@ def load_df(startup=False, initial_data=None, curr_df=None):
     else:
         try:
             curr_df = pd.read_pickle('new_df.pkl')
-            st.warning('Currently running on cache! Please use the `Clear Cache` button to use the original dataset')
+            #st.warning('Currently running on cache! Please use the `Clear Cache` button to use the original dataset')
         except:
             pass
     return curr_df
@@ -60,12 +60,15 @@ def save_df(df):
     df.to_pickle('new_df.pkl')
     st.experimental_rerun()
 
-def clear_cache():
+def clear_cache(warning=True):
     try:
         os.remove('new_df.pkl')
         st.experimental_rerun()
     except:
-        st.warning('No current cache found!')
+        if warning:
+            st.warning('No current cache found!')
+        else:
+            pass
 
 def calc_column_mode(df_col):
     #Return the value with the highest count amongst all

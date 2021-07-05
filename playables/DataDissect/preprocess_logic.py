@@ -132,27 +132,30 @@ def get_feature_types(orig_dtypes, all_features):
         simple_dtypes[feature_name] = simple_dtype
     return simple_dtypes
 
-def check_compatibility(col_values, change_from, change_to):
-    if change_from != 'str':
-        return True
-    else:
+def compatibility_convert(str_column, change_from, change_to):
         #Str can be converted to int/float only if all the str values are actually numerical
-        for value in col_values:
-            if not value.isnumeric():
-                return False
-        return True
+        try:
+            str_column = str_column.astype(float)
+        except:
+            st.write(f'{str_column} is not compatible to be converted from {change_from} to {change_to}')
+            return str_column
+
+        if change_to == 'int':
+            str_column = str_column.astype(int)
+
+        return str_column
 
 def convert_datatype_with(df, feature_selections, feature_types, all_features):
     for feature_name in all_features:
         change_from = feature_types[feature_name]
         change_to = feature_selections[feature_name]
 
-        if check_compatibility(df[feature_name].value_counts().index, change_from, change_to):
+        if change_from != 'str':
             #st.write(f'{change_from} -> {change_to} compatible')
             func = get_func_convert(change_to)
             if func is not None:
-                #st.write(f'Convering {feature_name} to {change_to}')
                 df[feature_name] = df[feature_name].astype(func)
-                #st.write(df.dtypes)
-                #st.write('change done')
+        else:
+            df[feature_name] = compatibility_convert(df[feature_name], change_from, change_to)
+
     save_df(df)

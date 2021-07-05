@@ -31,7 +31,12 @@ def fix_missing_values(df, missing_info, feature_type):
     else:
         st.write('There are no missing values in the dataset!')
 
-def convert_datatype(df, feature_type):
+def convert_datatype(df, missing_info, feature_type):
+
+    if missing_info.sum() != 0:
+        st.write('The dataset seems to contain missing/Null values. Please fill the missing values before proceeding further :)')
+        return
+
     num_features, cat_features, bool_features = feature_type.values()
     all_features = num_features + cat_features + bool_features
     dtypes = df.dtypes
@@ -52,8 +57,12 @@ def convert_datatype(df, feature_type):
             type = feature_types[feature_name]
             with feature_container:
                 st.write(f'**{feature_name}**')
+                st.write('\n')
+                st.write('\n')
             with type_container:
                 st.write(f'Current Datatype: *{type}*')
+                st.write('\n')
+                st.write('\n')
             with convert_box:
                 type_select = st.selectbox('', conversion_options[type], key=feature_name)
                 feature_selections[feature_name] = type_select
@@ -61,7 +70,7 @@ def convert_datatype(df, feature_type):
         update = st.form_submit_button('Update Dataset')
         if update:
             convert_datatype_with(df, feature_selections, feature_types, all_features)
-            save_df(new_df)
+            #save_df(new_df)
 
 def handle_categorical(df):
     pass
@@ -70,15 +79,11 @@ def pre_process_data(df):
     df = load_df(curr_df=df)
     display_dataset_info(df, without_summary=True, subheader='Current Dataset:')
     options_available, option_description = st.beta_columns([1,2])
-    clear_button = st.button('Clear Cache')
     missing_info, feature_type = get_feature_info(df)
 
     with options_available:
         options = ['', 'Fix Missing Values', 'Convert DataType', 'Handle Categorical Data']
         todo = st.radio('Options Available:', options)
-
-    if clear_button:
-        clear_cache()
 
     if todo == options[1]:
         with option_description:
@@ -91,7 +96,7 @@ def pre_process_data(df):
             st.write("\n\n\n\n")
             st.write('Sometimes, we might have to convert the datatype of certain\
             variables to use them.')
-        convert_datatype(df, feature_type)
+        convert_datatype(df, missing_info, feature_type)
     elif todo == options[3]:
         with option_description:
             st.write("\n\n\n\n")
