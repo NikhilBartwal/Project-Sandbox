@@ -9,15 +9,17 @@ def fix_missing_values_with(df, method, num_features=None, cat_features=None, bo
     new_df = df.copy()
     columns_to_fill = num_features + cat_features + bool_features
 
-    if method == 'drop':
+    if method == 'do nothing':
+        return
+    elif method == 'drop':
         st.write('This change is ir-reversible, so please confirm your choice!')
         confirm_update = st.button('Drop NULL rows')
 
         if confirm_update:
+            st.write('testing')
             new_df.dropna(inplace=True)
-
-        save_df(new_df)
-    elif method != 'custom':
+            save_df(new_df)
+    elif method in ['mean', 'median']:
         # Usin the same template for mean, median over entire dataframe
         st.write(f'Use {method} to fill up all the null values in the dataset?')
         confirm_update = st.button('Update')
@@ -47,11 +49,11 @@ def fix_missing_values_with(df, method, num_features=None, cat_features=None, bo
                     #Display column name and options in each container
                     st.write(feature_name)
                     if feature_name in num_features:
-                        feature_choice = st.radio('', custom_options_num, key=feature_name)
+                        feature_choice = st.radio('', custom_options_num, key=feature_name+'_missing_choice')
                     elif feature_name in cat_features or bool_features:
-                        feature_choice = st.radio('', custom_options_cat, key=feature_name)
+                        feature_choice = st.radio('', custom_options_cat, key=feature_name+'_missing_choice')
                     #Takes the value for static input, defaults to mean if option selected but value not entered
-                    value = st.text_input('Enter value (for static input):', key=feature_name)
+                    value = st.text_input('Enter value (for static input):', key=feature_name+'_static_input')
 
                     #In case static value is selected but no value is entered
                     if feature_choice == 'Static Value' and value == '':
@@ -101,6 +103,12 @@ def update_custom_values(
     #Fill all the static values in one go
     new_df.fillna(feature_static_values, inplace=True, downcast='infer')
     return new_df
+
+def display_cat_preview(df, feature_choice, feature_values, use_defaults):
+    pass
+
+def get_cat_feature_values(df, feature_name):
+    return df[feature_name].value_counts()
 
 def get_func_convert(feature_type):
     feature_type = feature_type.lower()

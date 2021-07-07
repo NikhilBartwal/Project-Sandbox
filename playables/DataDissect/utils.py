@@ -44,12 +44,29 @@ def display_dataset_info(df, without_summary=False, subheader=None):
         for info in footers:
             st.write("**_" + info + "_**")
 
+    test = st.button('test')
+    if test:
+        st.experimental_rerun()
+
 def load_df(startup=False, initial_data=None, curr_df=None):
     if startup:
-        df = pd.read_csv(initial_data)
+        try:
+            #Try reading the OG dataset from the uploaded file
+            df = pd.read_csv(initial_data)
+            #If successful, store the dataset for later
+            df.to_csv('original.csv', index=False)
+        except:
+            try:
+                #If the uploaded file is no longer present, use the cached dataset
+                df = pd.read_csv('original.csv')
+            except:
+                #Warning generated in case of any server issue
+                st.write('Dataset not found!')
         return df
+
     else:
         try:
+            #Try to load the latest version of the dataset is tt exists
             curr_df = pd.read_pickle('new_df.pkl')
             #st.warning('Currently running on cache! Please use the `Clear Cache` button to use the original dataset')
         except:

@@ -8,7 +8,7 @@ from playables.DataDissect.preprocess import pre_process_data
 from playables.DataDissect.utils import load_df, save_df
 from matplotlib import pyplot as plt
 
-def visualize_data():
+def visualize_data(df):
     pass
 
 def load_data_dissect():
@@ -22,7 +22,7 @@ def load_data_dissect():
                         'Visualizations']
 
         st.sidebar.subheader('Choose what to do with the dataset!')
-        option = st.sidebar.selectbox('Please select one:', data_options)
+        option = st.sidebar.selectbox('Please select one:', data_options, key='menu_select')
 
         if option == data_options[0]:
             display_dataset_info(df)
@@ -30,6 +30,11 @@ def load_data_dissect():
             pre_process_data(df)
         elif option == data_options[2]:
             visualize_data(df)
+
+        #A little hack to discard the menu option from the previous run
+        if 'menu_select' in st.session_state:
+            del st.session_state['menu_select']
     else:
+        clear_cache(warning=False)
         with welcome_container:
             display_data_dissect_info()
