@@ -44,10 +44,6 @@ def display_dataset_info(df, without_summary=False, subheader=None):
         for info in footers:
             st.write("**_" + info + "_**")
 
-    test = st.button('test')
-    if test:
-        st.experimental_rerun()
-
 def load_df(startup=False, initial_data=None, curr_df=None):
     if startup:
         try:

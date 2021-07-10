@@ -3,7 +3,7 @@ import streamlit as st
 
 from playables.DataDissect.utils import display_dataset_info, get_func_to_fill
 from playables.DataDissect.utils import load_df, save_df, clear_cache, get_feature_info
-from playables.DataDissect.preprocess_logic import update_custom_values, fix_missing_values_with
+from playables.DataDissect.preprocess_logic import update_custom_values, fix_missing_values_with, display_cat_preview
 from playables.DataDissect.preprocess_logic import convert_datatype_with, get_feature_types, get_cat_feature_values
 
 def fix_missing_values(df, missing_info, feature_type):
@@ -77,19 +77,20 @@ def handle_categorical(df, feature_type):
     st.write('Please select the desired option for the categorical features present in the dataset.')
     st.write('You can uncheck the **USE DEFAULTS** checkbox to enter custom labels for label encoding on the next page')
 
-    available_choices = ['No Change', 'Label Encoding', 'One-Hot Encoding']
+    encoding_choices = ['No Change', 'Label Encoding', 'One-Hot Encoding']
     feature_choice = {}
     feature_values = {}
-    default_encodings = {}
+    use_defaults = {}
 
-    with st.form('Handling Categorical'):
+    placeholder = st.empty()
+    with placeholder.form('Handling Categorical'):
         for feature_name in cat_features:
             feature_choice_col, feature_values_col = st.beta_columns(2)
 
             with feature_choice_col:
                 st.write(f'Feature Name: **{feature_name}**')
-                feature_choice[feature_name] = st.radio('Select your choice', available_choices, key=feature_name)
-                default_encodings[feature_name] = st.checkbox(
+                feature_choice[feature_name] = st.radio('Select your choice', encoding_choices, key=feature_name)
+                use_defaults[feature_name] = st.checkbox(
                     'Use default values for encoding \n \
                     (Uncheck this to provide custom encodings on the next page)',
                     key=feature_name+'default_encoding')
@@ -99,11 +100,18 @@ def handle_categorical(df, feature_type):
                 feature_values[feature_name] = get_cat_feature_values(df, feature_name)
                 st.write(feature_values[feature_name])
 
-        use_defaults = st.checkbox('Use Default parameters for label encoding')
+        st.warning('On clicking the Preview button, you might receive a \'Bad Message\' warning.\
+            It is a bug in the current release of Streamlit and will be fixed in the future update.\
+            Simply click Done and continue with your work :)')
 
         preview_button = st.form_submit_button('Preview')
-        if preview_button:
-            display_cat_preview(df, feature_choice, feature_values, use_defaults)
+
+    if preview_button:
+        placeholder.empty()
+        display_cat_preview(df, encoding_choices, feature_choice, feature_values, use_defaults)
+        back = st.button('Back')
+        if back:
+            st.experimental_rerun()
 
 def pre_process_data(df):
     df = load_df(curr_df=df)

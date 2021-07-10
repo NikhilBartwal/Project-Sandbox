@@ -104,8 +104,56 @@ def update_custom_values(
     new_df.fillna(feature_static_values, inplace=True, downcast='infer')
     return new_df
 
-def display_cat_preview(df, feature_choice, feature_values, use_defaults):
-    pass
+def display_cat_preview(df, encoding_choices, feature_choice, feature_values, use_defaults):
+    final_label_encoding = {}
+    final_onehot_encoding = []
+
+    with st.form('Categorical Encoding Preview'):
+        for feature_name, feature_encoding in feature_choice.items():
+            feature_col, encoding_col = st.beta_columns(2)
+            feature_col.write(f'Feature Name: **{feature_name}**')
+
+            if feature_encoding == encoding_choices[1]:
+                default_status = 'Default' if use_defaults[feature_name]==True else 'Custom'
+                encoding_col.write(f'Encoding Choice: ** *{feature_encoding} ({default_status})* **')
+
+                if default_status == 'Default':
+                    final_label_encoding[feature_name] = 'default'
+                else:
+                    final_label_encoding[feature_name] = get_custom_encodings(feature_values[feature_name].index)
+            else:
+                encoding_col.write(f'{feature_encoding}')
+                if feature_encoding == encoding_choices[2]:
+                    final_onehot_encoding.append(feature_name)
+            st.write('-----')
+
+        update = st.form_submit_button('Update Dataset')
+    back = st.button('Back', key='myback')
+
+    if update:
+        apply_cat_encodings(df, final_label_encoding, final_onehot_encoding)
+    if back:
+        st.experimental_rerun()
+
+def get_custom_encodings(feature_values):
+    st.write('Please enter custom encoding values (in integer format):')
+    custom_encoding_values = {}
+
+    for value in feature_values:
+        value_name_col, custom_value_col, _ = st.beta_columns(3)
+
+        value_name_col.write(f'Original value: **{value}**')
+
+        with custom_value_col:
+            custom_value = st.text_input('Encoded value:', key=value+'custom_encoding')
+
+        custom_encoding_values[value] = custom_value
+
+    return custom_encoding_values
+
+def apply_cat_encodings(df, final_label_encoding, final_onehot_encoding):
+    st.write(final_label_encoding)
+    st.write(final_onehot_encoding)
 
 def get_cat_feature_values(df, feature_name):
     return df[feature_name].value_counts()
