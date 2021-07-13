@@ -108,6 +108,11 @@ def display_cat_preview(df, encoding_choices, feature_choice, feature_values, us
     final_label_encoding = {}
     final_onehot_encoding = []
 
+    if 'feature_choice' not in st.session_state:
+        put_in_session_state(feature_choice, feature_values, use_defaults)
+    elif 'feature_choice' in st.session_state:
+        feature_choice, feature_values, use_defaults = get_from_session_state()
+
     with st.form('Categorical Encoding Preview'):
         for feature_name, feature_encoding in feature_choice.items():
             feature_col, encoding_col = st.beta_columns(2)
@@ -131,8 +136,11 @@ def display_cat_preview(df, encoding_choices, feature_choice, feature_values, us
     back = st.button('Back', key='myback')
 
     if update:
+        #st.session_state['preview_status'] = False
+        st.write(final_label_encoding)
         apply_cat_encodings(df, final_label_encoding, final_onehot_encoding)
     if back:
+        st.session_state['preview_status'] = False
         st.experimental_rerun()
 
 def get_custom_encodings(feature_values):
@@ -154,6 +162,19 @@ def get_custom_encodings(feature_values):
 def apply_cat_encodings(df, final_label_encoding, final_onehot_encoding):
     st.write(final_label_encoding)
     st.write(final_onehot_encoding)
+
+def put_in_session_state(feature_choice, feature_values, use_defaults):
+    if 'feature_choice' not in st.session_state:
+        st.session_state['feature_choice'] = feature_choice
+        st.session_state['feature_values'] = feature_values
+        st.session_state['use_defaults'] = use_defaults
+
+def get_from_session_state():
+    feature_choice = st.session_state['feature_choice']
+    feature_values = st.session_state['feature_values']
+    use_defaults = st.session_state['use_defaults']
+
+    return feature_choice, feature_values, use_defaults
 
 def get_cat_feature_values(df, feature_name):
     return df[feature_name].value_counts()

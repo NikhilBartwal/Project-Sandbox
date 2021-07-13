@@ -4,7 +4,6 @@ import streamlit as st
 from playables.DataDissect.utils import display_dataset_info, get_func_to_fill
 from playables.DataDissect.utils import load_df, save_df, clear_cache, get_feature_info
 from playables.DataDissect.preprocess_logic import update_custom_values, fix_missing_values_with, display_cat_preview
-from playables.DataDissect.preprocess_logic import convert_datatype_with, get_feature_types, get_cat_feature_values
 
 def fix_missing_values(df, missing_info, feature_type):
     container = st.beta_container()
@@ -83,35 +82,44 @@ def handle_categorical(df, feature_type):
     use_defaults = {}
 
     placeholder = st.empty()
-    with placeholder.form('Handling Categorical'):
-        for feature_name in cat_features:
-            feature_choice_col, feature_values_col = st.beta_columns(2)
+    first_screen = False
 
-            with feature_choice_col:
-                st.write(f'Feature Name: **{feature_name}**')
-                feature_choice[feature_name] = st.radio('Select your choice', encoding_choices, key=feature_name)
-                use_defaults[feature_name] = st.checkbox(
-                    'Use default values for encoding \n \
-                    (Uncheck this to provide custom encodings on the next page)',
-                    key=feature_name+'default_encoding')
+    if 'preview_status' not in st.session_state:
+        first_screen = True
+    else:
+        if st.session_state['preview_status'] == False:
+            first_screen = True
 
-            with feature_values_col:
-                st.write('Value distribution of feature:')
-                feature_values[feature_name] = get_cat_feature_values(df, feature_name)
-                st.write(feature_values[feature_name])
+    if first_screen:
+        with placeholder.form('Handling Categorical'):
+            for feature_name in cat_features:
+                feature_choice_col, feature_values_col = st.beta_columns(2)
 
-        st.warning('On clicking the Preview button, you might receive a \'Bad Message\' warning.\
-            It is a bug in the current release of Streamlit and will be fixed in the future update.\
-            Simply click Done and continue with your work :)')
+                with feature_choice_col:
+                    st.write(f'Feature Name: **{feature_name}**')
+                    feature_choice[feature_name] = st.radio('Select your choice', encoding_choices, key=feature_name)
+                    use_defaults[feature_name] = st.checkbox(
+                        'Use default values for encoding \n \
+                        (Uncheck this to provide custom encodings on the next page)',
+                        key=feature_name+'default_encoding')
 
-        preview_button = st.form_submit_button('Preview')
+                with feature_values_col:
+                    st.write('Value distribution of feature:')
+                    feature_values[feature_name] = get_cat_feature_values(df, feature_name)
+                    st.write(feature_values[feature_name])
+
+            st.warning('On clicking the Preview button, you might receive a \'Bad Message\' warning.\
+                It is a bug in the current release of Streamlit and will be fixed in the future update.\
+                Simply click Done and continue with your work :)')
+
+            preview_button = st.form_submit_button('Preview')
+    else:
+        preview_button = True
 
     if preview_button:
+        st.session_state['preview_status'] = True
         placeholder.empty()
         display_cat_preview(df, encoding_choices, feature_choice, feature_values, use_defaults)
-        back = st.button('Back')
-        if back:
-            st.experimental_rerun()
 
 def pre_process_data(df):
     df = load_df(curr_df=df)
