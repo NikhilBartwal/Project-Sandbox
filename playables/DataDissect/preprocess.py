@@ -4,6 +4,7 @@ import streamlit as st
 from playables.DataDissect.utils import display_dataset_info, get_func_to_fill
 from playables.DataDissect.utils import load_df, save_df, clear_cache, get_feature_info
 from playables.DataDissect.preprocess_logic import update_custom_values, fix_missing_values_with, display_cat_preview
+from playables.DataDissect.preprocess_logic import convert_datatype_with, get_feature_types, get_cat_feature_values
 
 def fix_missing_values(df, missing_info, feature_type):
     container = st.beta_container()
@@ -72,6 +73,11 @@ def convert_datatype(df, missing_info, feature_type):
 
 def handle_categorical(df, feature_type):
     _, cat_features, _ = feature_type.values()
+
+    if len(cat_features) == 0:
+        st.write('All categorical data seems to have been handled well ;)')
+        return
+
     #Convert the categorical features to one-hot/label encoded form as selected by user
     st.write('Please select the desired option for the categorical features present in the dataset.')
     st.write('You can uncheck the **USE DEFAULTS** checkbox to enter custom labels for label encoding on the next page')

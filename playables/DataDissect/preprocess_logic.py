@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 
 from playables.DataDissect.utils import save_df, get_func_to_fill
+from sklearn.preprocessing import LabelEncoder
 
 def fix_missing_values_with(df, method, num_features=None, cat_features=None, bool_features=None):
     #This is the function that actually fills the NULL values with the specified method
@@ -136,9 +137,8 @@ def display_cat_preview(df, encoding_choices, feature_choice, feature_values, us
     back = st.button('Back', key='myback')
 
     if update:
-        #st.session_state['preview_status'] = False
-        st.write(final_label_encoding)
-        apply_cat_encodings(df, final_label_encoding, final_onehot_encoding)
+        st.session_state['preview_status'] = False
+        apply_cat_encodings(df, final_label_encoding, final_onehot_encoding, feature_values)
     if back:
         st.session_state['preview_status'] = False
         st.experimental_rerun()
@@ -155,13 +155,46 @@ def get_custom_encodings(feature_values):
         with custom_value_col:
             custom_value = st.text_input('Encoded value:', key=value+'custom_encoding')
 
+        if custom_value:
+            try:
+                custom_value = int(custom_value)
+            except:
+                st.warning('Please enter an integer for custom encodings')
         custom_encoding_values[value] = custom_value
 
     return custom_encoding_values
 
-def apply_cat_encodings(df, final_label_encoding, final_onehot_encoding):
-    st.write(final_label_encoding)
+def apply_cat_encodings(df, final_label_encoding, final_onehot_encoding, feature_values):
+    #One-hot encoding the selected features
+    st.write(type(final_onehot_encoding))
+    st.write(df)
     st.write(final_onehot_encoding)
+    onehot_df = df[final_onehot_encoding]
+    onehot_df =  pd.get_dummies(onehot_df)
+    df.drop(final_onehot_encoding, axis=1, inplace=True)
+    df = pd.concat([df, onehot_df], axis=1)
+
+    #Label encoding features according to custom/default value
+    for feature_name, feature_choice in final_label_encoding.items():
+        if feature_choice == 'default':
+            st.write(f'Feature name: {feature_name}')
+            st.write(feature_values)
+            st.write(df)
+            df[feature_name] = apply_default_encoding(df[feature_name], feature_values[feature_name])
+        else:
+            df[feature_name] = apply_custom_encoding(df[feature_name], feature_choice, feature_values[feature_name])
+
+    save_df(df)
+
+def apply_default_encoding(feature_col, feature_values):
+    le = LabelEncoder()
+    le.fit(feature_values.index)
+
+    return le.transform(feature_col)
+
+def apply_custom_encoding(feature_col, custom_encodings, feature_values):
+    feature_col.replace(custom_encodings, inplace=True)
+    return feature_col
 
 def put_in_session_state(feature_choice, feature_values, use_defaults):
     if 'feature_choice' not in st.session_state:
