@@ -5,11 +5,9 @@ import streamlit as st
 
 from playables.DataDissect.utils import *
 from playables.DataDissect.preprocess import pre_process_data
+from playables.DataDissect.visualize import visualize_data
 from playables.DataDissect.utils import load_df, save_df
 from matplotlib import pyplot as plt
-
-def visualize_data(df):
-    pass
 
 def load_data_dissect():
     welcome_container = st.beta_container()
@@ -17,9 +15,9 @@ def load_data_dissect():
     #Start the analysis only when the user has uploaded a dataset
     if file:
         df = load_df(startup=True, initial_data=file)
-        data_options = ['Display Original Dataset',
+        data_options = ['Display Dataset Summary',
                         'Pre-process data',
-                        'Visualizations']
+                        'Visualize Dataset']
 
         st.sidebar.subheader('Choose what to do with the dataset!')
         option = st.sidebar.selectbox('Please select one:', data_options, key='menu_select')

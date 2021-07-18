@@ -4,6 +4,9 @@ import os
 import pandas as pd
 import streamlit as st
 
+import pandas_profiling
+from streamlit_pandas_profiling import st_profile_report
+
 def parse_pandas_info(info):
     splits = info.split('\n')
     #Since the first and end parts consist of extra info about the dataset,
@@ -21,6 +24,23 @@ def parse_pandas_info(info):
     info_df = pd.DataFrame({'Columns': col, 'Non-Null Count': count, 'Dtype': dtype})
     return info_df, basic_info, end_info
 
+def dataset_general_info(df):
+    st.subheader('Dataset General Info:')
+
+    buf = io.StringIO()
+    df.info(buf=buf)
+    info_df, headers, footers = parse_pandas_info(buf.getvalue())
+
+    for info in headers:
+        st.write("**_" + info + "_**")
+    st.write(info_df)
+    for info in footers:
+        st.write("**_" + info + "_**")
+
+@st.cache
+def get_dataset_profile_report(df):
+    return df.profile_report()
+
 def display_dataset_info(df, without_summary=False, subheader=None):
     if subheader:
         st.subheader(subheader)
@@ -29,20 +49,9 @@ def display_dataset_info(df, without_summary=False, subheader=None):
     st.write(df.head())
     #Since the df.info() prints directly to the console, so we are using an
     # IO buffer to store the output as a string which can further be converted into a Pandas DataFrame
-    if without_summary:
-        return
-    else:
-        st.subheader('Dataset General Info:')
 
-        buf = io.StringIO()
-        df.info(buf=buf)
-        info_df, headers, footers = parse_pandas_info(buf.getvalue())
-
-        for info in headers:
-            st.write("**_" + info + "_**")
-        st.write(info_df)
-        for info in footers:
-            st.write("**_" + info + "_**")
+    profile = get_dataset_profile_report(df)
+    st_profile_report(profile)
 
 def load_df(startup=False, initial_data=None, curr_df=None):
     if startup:
@@ -107,4 +116,4 @@ def get_feature_info(df):
 
 def display_data_dissect_info():
     st.title('Welcome to Data Dissect!')
-    st.subheader('Pre-process your dataset without any code and visualize any/all relationships you want to!')
+    st.subheader('Summarize, Understand, Pre-process and Visualize your dataset the way you want, without writing a single line of code!')
