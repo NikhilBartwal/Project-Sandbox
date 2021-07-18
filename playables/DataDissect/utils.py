@@ -25,19 +25,16 @@ def parse_pandas_info(info):
     return info_df, basic_info, end_info
 
 def dataset_general_info(df):
-    st.subheader('Dataset General Info:')
+    st.subheader('Dataset Features Info:')
 
     buf = io.StringIO()
     df.info(buf=buf)
     info_df, headers, footers = parse_pandas_info(buf.getvalue())
 
-    for info in headers:
-        st.write("**_" + info + "_**")
     st.write(info_df)
     for info in footers:
         st.write("**_" + info + "_**")
 
-@st.cache
 def get_dataset_profile_report(df):
     return df.profile_report()
 
