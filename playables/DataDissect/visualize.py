@@ -10,6 +10,16 @@ from playables.DataDissect.utils import dataset_general_info
 
 def visualize_data(df):
     df = load_df(curr_df=df)
+
+    analysis_types = ['Dataset Correlation Heatmap', 'Visualize Dataset Features']
+    analysis_type = st.sidebar.radio('Select option to perform:', analysis_types)
+
+    if analysis_type == analysis_types[0]:
+        display_correlation(df)
+    elif analysis_type == analysis_types[1]:
+        display_visualization(df)
+
+def display_correlation(df):
     _, subheader, _ = st.beta_columns([1,1,2])
     with subheader:
         st.subheader('Data Correlation Heatmap')
@@ -24,16 +34,13 @@ def visualize_data(df):
     with type_col:
         dataset_general_info(df)
 
-    analysis_types = ['Dataset Correlation Heatmap', 'Univariate analysis', 'Bivariate analysis']
-    analysis_type = st.sidebar.radio('Select type of visualization to perform:', analysis_types)
+def display_visualization(df):
+    #hue = st.sidebar.selectbox('Select variable for hue:', [])
+    kind = st.sidebar.radio('Select kind of plot:', ['Scatter', 'KDE', 'Hist', 'Reg'])
+    diag_kind = st.sidebar.radio('Select kind of plot for diagonal:', ['Auto', 'Hist', 'KDE', None])
 
-    if analysis_type == analysis_types[1]:
-        univariate_analysis(df)
-    elif analysis_type == analysis_types[2]:
-        bivariate_analysis(df)
-
-def univariate_analysis(df):
-    pass
-
-def bivariate_analysis(df):
-    pass
+    if diag_kind is not None:
+        fig = sns.pairplot(df, size=2.5, kind=kind.lower(), diag_kind=diag_kind.lower())
+    else:
+        fig = sns.pairplot(df, size=2.5, kind=kind.lower())
+    st.pyplot(fig)
