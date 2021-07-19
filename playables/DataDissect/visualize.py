@@ -35,12 +35,13 @@ def display_correlation(df):
         dataset_general_info(df)
 
 def display_visualization(df):
-    #hue = st.sidebar.selectbox('Select variable for hue:', [])
+    st.title('Feature Inter-relationships Visualization')
+    hue = st.sidebar.selectbox('Select variable for hue:', [None] + list(df.columns))
     kind = st.sidebar.radio('Select kind of plot:', ['Scatter', 'KDE', 'Hist', 'Reg'])
     diag_kind = st.sidebar.radio('Select kind of plot for diagonal:', ['Auto', 'Hist', 'KDE', None])
 
     if diag_kind is not None:
-        fig = sns.pairplot(df, size=2.5, kind=kind.lower(), diag_kind=diag_kind.lower())
+        fig = sns.pairplot(df, size=2.5, hue=hue, kind=kind.lower(), diag_kind=diag_kind.lower())
     else:
-        fig = sns.pairplot(df, size=2.5, kind=kind.lower())
+        fig = sns.pairplot(df, size=2.5, hue=hue, kind=kind.lower())
     st.pyplot(fig)
