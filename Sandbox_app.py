@@ -7,6 +7,7 @@ from playables.DataDissect.data_dissect import load_data_dissect
 
 def display_homepage():
     st.write('Welcome to Project Sandbox!')
+    #st.image('logos/sandbox.png')
 
 def load_app():
     options = ['Homepage', 'Data Dissect']

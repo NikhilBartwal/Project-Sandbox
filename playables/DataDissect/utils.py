@@ -112,5 +112,12 @@ def get_feature_info(df):
     return missing_info, feature_type
 
 def display_data_dissect_info():
-    st.title('Welcome to Data Dissect!')
-    st.subheader('Summarize, Understand, Pre-process and Visualize your dataset the way you want, without writing a single line of code!')
+    _, title_col, _ = st.beta_columns([1,1.5,1])
+    with title_col:
+        st.title('Welcome to Data Dissect!')
+
+    st.subheader('Summarize, Understand, Pre-process and Visualize your dataset, without writing a single line of code!')
+
+    _, image_col, _ = st.beta_columns([1,5,1])
+    with image_col:
+        st.image('logos/datadissect.png', use_column_width='auto')
