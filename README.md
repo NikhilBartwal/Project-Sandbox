@@ -1,5 +1,5 @@
 # Project-Sandbox
-Project-Snadbox is a collection of different useful and interesting Data Science, ML, DL and NLP applications that are both easy to learn and fun to use. You can check it out here: <URL>
+Project-Sandbox is a collection of different useful and interesting Data Science, ML, DL and NLP applications that are both easy to learn and fun to use. You can check out the very first app here: [DataDissect](https://share.streamlit.io/nikhilbartwal/project-sandbox/main/Sandbox_app.py)
   
 # Table of Contents
 
