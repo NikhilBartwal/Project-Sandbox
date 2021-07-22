@@ -10,11 +10,11 @@ def display_homepage():
     #st.image('logos/sandbox.png')
 
 def load_app():
-    options = ['Homepage', 'Data Dissect']
+    options = ['Data Dissect', 'Homepage']
     option = st.sidebar.selectbox('Please select one of the following:', options)
-    if option==options[0]:
+    if option==options[1]:
         display_homepage()
-    elif option==options[1]:
+    elif option==options[0]:
         load_data_dissect()
 
 if __name__ == '__main__':
