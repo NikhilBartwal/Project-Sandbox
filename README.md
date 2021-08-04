@@ -3,9 +3,9 @@ Project-Sandbox is a collection of different useful and interesting Data Science
   
 # Table of Contents
 
-* [About the App](#about-the-app)
+* [About the Project](#about-the-project)
 * [Screenshots](#screenshots)
-* [Contents of Repo](#contents-of-repo)
+* [What's In The Repo](#whats-in-the-repo)
 * [Installation](#installation)
 * [Technologies](#technologies)
 * [Future Goals](#future-goals)
