@@ -21,8 +21,14 @@ Project-Sandbox houses a wide variety of apps, each complete on its own and serv
   
   Here are some screenshots of the app in action:
   
-  <SCREENSHOTS>
-    
+![Langing page](playables/DataDissect/Screenshots/homepage.png)
+![Uploading Dataset](playables/DataDissect/Screenshots/app_in_action.png)
+![Dataset Info](playables/DataDissect/Screenshots/charts.png)
+![Dataset Info](playables/DataDissect/Screenshots/coors.png)
+![Variable Info](playables/DataDissect/Screenshots/variable.png)
+![Convert Datatype](playables/DataDissect/Screenshots/convert.png)
+![Handle Categorical](playables/DataDissect/Screenshots/datatype.png)
+
 ## 2. Once Upon a Time
     
 Now, this is a really cool application that I'm currently working on. IT basically lets the user enter a single line and select a genre and the system will generate a complete story of that genre by itself, simply by taking that line and feeding it to a cutting-edge NLP model.
