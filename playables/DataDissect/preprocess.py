@@ -129,7 +129,7 @@ def handle_categorical(df, feature_type):
 
 def pre_process_data(df):
     df = load_df(curr_df=df)
-    display_dataset_info(df, without_summary=True, subheader='Current Dataset:')
+    display_dataset_info(df, without_summary=True, profiling=False, subheader='Current Dataset:')
     options_available, option_description = st.beta_columns([1,2])
     missing_info, feature_type = get_feature_info(df)
 

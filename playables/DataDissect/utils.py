@@ -38,7 +38,7 @@ def dataset_general_info(df):
 def get_dataset_profile_report(df):
     return df.profile_report()
 
-def display_dataset_info(df, without_summary=False, subheader=None):
+def display_dataset_info(df, without_summary=False, profiling=False, subheader=None):
     if subheader:
         st.subheader(subheader)
     else:
@@ -46,9 +46,9 @@ def display_dataset_info(df, without_summary=False, subheader=None):
     st.write(df.head())
     #Since the df.info() prints directly to the console, so we are using an
     # IO buffer to store the output as a string which can further be converted into a Pandas DataFrame
-
-    profile = get_dataset_profile_report(df)
-    st_profile_report(profile)
+    if profiling:
+        profile = get_dataset_profile_report(df)
+        st_profile_report(profile)
 
 def load_df(startup=False, initial_data=None, curr_df=None):
     if startup:
