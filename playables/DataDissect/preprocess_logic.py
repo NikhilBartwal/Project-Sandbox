@@ -229,7 +229,7 @@ def get_feature_types(orig_dtypes, all_features):
     orig_dtypes = dict(orig_dtypes)
     simple_dtypes = {}
     for feature_name in all_features:
-        feature_dtype = orig_dtypes[feature_name].name
+        feature_dtype = orig_dtypes[feature_name]
         if 'int' in feature_dtype:
             simple_dtype = 'int'
         elif 'float' in feature_dtype:
