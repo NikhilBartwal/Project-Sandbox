@@ -23,7 +23,7 @@ def load_data_dissect():
         option = st.sidebar.selectbox('Please select one:', data_options, key='menu_select')
 
         if option == data_options[0]:
-            display_dataset_info(df)
+            display_dataset_info(df, profiling=True)
         elif option == data_options[1]:
             pre_process_data(df)
         elif option == data_options[2]:
