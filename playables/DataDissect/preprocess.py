@@ -39,8 +39,8 @@ def convert_datatype(df, missing_info, feature_type):
 
     num_features, cat_features, bool_features = feature_type.values()
     all_features = num_features + cat_features + bool_features
-    dtypes = df.dtypes
-    st.dataframe(pd.DataFrame(df.dtypes, columns=['DataType']))
+    dtypes = df.dtypes.apply(lambda dtype: dtype.name)
+    st.dataframe(pd.DataFrame(dtypes, columns=['DataType']))
 
     conversion_options = {
         'int': ['No Change', 'float', 'str'],
