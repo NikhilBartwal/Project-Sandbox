@@ -40,7 +40,7 @@ def convert_datatype(df, missing_info, feature_type):
     num_features, cat_features, bool_features = feature_type.values()
     all_features = num_features + cat_features + bool_features
     dtypes = df.dtypes
-    st.write(dtypes)
+    st.write(pd.DataFrame(df.dtypes, columns=['DataType']))
 
     conversion_options = {
         'int': ['No Change', 'float', 'str'],
