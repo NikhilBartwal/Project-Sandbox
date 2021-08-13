@@ -70,10 +70,13 @@ def convert_datatype(df, missing_info, feature_type):
         'bool': ['No Change', 'int', 'str']
     }
     feature_selections = {}
+    #Convert Pandas datatypes to simple string data type name
     feature_types = get_feature_types(dtypes, all_features)
 
+    #Display the current and possible conversion daat types for all features
     with st.form('Datatype Conversion Form'):
         for feature_name in all_features:
+            #Create streamlit containers for every part for dynamic UI
             feature_container, type_container, convert_box = st.columns(3)
             type = feature_types[feature_name]
             with feature_container:
@@ -87,14 +90,26 @@ def convert_datatype(df, missing_info, feature_type):
             with convert_box:
                 type_select = st.selectbox('Select new datatype:', conversion_options[type], key=feature_name)
                 feature_selections[feature_name] = type_select
+
+        #Gives warning and then updates the feature data-types as selected by the user
         st.write('This step is ir-reversible. Please check the selections and click Update')
         update = st.form_submit_button('Update Dataset')
         if update:
             convert_datatype_with(df, feature_selections, feature_types, all_features)
 
 def handle_categorical(df, feature_type):
+    """
+    Gives user the choiceto select the type of encoding to use for each categorical variable
+    and whether to use custom or default values for it
+
+    Args:
+    df (Pandas DataFrame)          : The current dataset in the streamlit run
+    feature_type (dict)            : Dictionary of all features' data types
+    """
+    #Get all the categorical features' names from the dict
     _, cat_features, _ = feature_type.values()
 
+    #Return if there are no categorical features present in the dataset
     if len(cat_features) == 0:
         st.write('All categorical data seems to have been handled well ;)')
         return
@@ -109,20 +124,24 @@ def handle_categorical(df, feature_type):
     use_defaults = {}
 
     placeholder = st.empty()
+    #Boolean to keep track of the first and preview screen
     first_screen = False
 
+    #If user has never been or isn't currently on preview screen, mark the flag as first screen
     if 'preview_status' not in st.session_state:
         first_screen = True
     else:
         if st.session_state['preview_status'] == False:
             first_screen = True
 
+    #Renders the first screen and display the features and user options
     if first_screen:
         with placeholder.form('Handling Categorical'):
             for feature_name in cat_features:
                 feature_choice_col, feature_values_col = st.columns(2)
 
                 with feature_choice_col:
+                    #Display the feature name along with the encoding and default choices
                     st.write(f'Feature Name: **{feature_name}**')
                     feature_choice[feature_name] = st.radio('Select your choice', encoding_choices, key=feature_name)
                     use_defaults[feature_name] = st.checkbox(
@@ -131,10 +150,12 @@ def handle_categorical(df, feature_type):
                         key=feature_name+'default_encoding')
 
                 with feature_values_col:
+                    #Displays the unique values present in the feature and their distribution
                     st.write('Value distribution of feature:')
                     feature_values[feature_name] = get_cat_feature_values(df, feature_name)
                     st.write(feature_values[feature_name])
 
+            #Display the warning for an issue with the current version of streamlit
             st.warning('On clicking the Preview button, you might receive a \'Bad Message\' warning.\
                 It is a bug in the current release of Streamlit and will be fixed in the future update.\
                 Simply click Done and continue with your work :)')
@@ -143,6 +164,7 @@ def handle_categorical(df, feature_type):
     else:
         preview_button = True
 
+    #If it's the preview screen or the user clicks it explicitly, render the next screen
     if preview_button:
         st.session_state['preview_status'] = True
         placeholder.empty()
