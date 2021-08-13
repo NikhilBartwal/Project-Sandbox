@@ -7,17 +7,29 @@ from playables.DataDissect.preprocess_logic import update_custom_values, fix_mis
 from playables.DataDissect.preprocess_logic import convert_datatype_with, get_feature_types, get_cat_feature_values
 
 def fix_missing_values(df, missing_info, feature_type):
+    """
+    Displays the options for filling in missing/NULL values and calls the
+    `fix_missing_values_with()` function to update the dataset
+
+    Args:
+    df (Pandas DataFrame)          : The current dataset in the streamlit run
+    missing_info (Pandas DataFrame): Info about NULL values in each feature
+    feature_type (dict)            : Dictionary of all features' data types
+    """
+    #Load the streamlit component structure
     container = st.container()
     with container:
         missing_col, fix_options_col = st.columns(2)
 
     num_features, cat_features, bool_features = feature_type.values()
 
+    #Only move forward if there are actually missing values in the dataset
     if missing_info.sum() != 0:
         with missing_col:
             st.write(f'There are a total of {missing_info.sum()} missing values in the dataset\
                     These are the columns that will be updated:')
             st.write(missing_info)
+        #Display available options to user
         with fix_options_col:
             fix_options = ['Do Nothing',
                             'Mean',
@@ -26,17 +38,26 @@ def fix_missing_values(df, missing_info, feature_type):
                             'Custom'
                             ]
             fix_option = st.radio('How to fill the dataset NULL values?', fix_options)
-
+        #Function to actually fill in the dataset as per the choice and save the dataset
         fix_missing_values_with(df, fix_option.lower(), num_features, cat_features, bool_features)
     else:
         st.write('There are no missing values in the dataset!')
 
 def convert_datatype(df, missing_info, feature_type):
+    """
+    Displays the current dataset's features and their corresponding data types
+    as well as the possible data types that they can be converted to.
 
+    Args:
+    df (Pandas DataFrame)          : The current dataset in the streamlit run
+    missing_info (Pandas DataFrame): Info about NULL values in each feature
+    feature_type (dict)            : Dictionary of all features' data types
+    """
+    #Continue only if all the missing values have been handled
     if missing_info.sum() != 0:
         st.write('The dataset seems to contain missing/Null values. Please fill the missing values before proceeding further :)')
         return
-
+    #Display urrent features with their data types
     num_features, cat_features, bool_features = feature_type.values()
     all_features = num_features + cat_features + bool_features
     dtypes = df.dtypes.apply(lambda dtype: dtype.name)
@@ -128,15 +149,20 @@ def handle_categorical(df, feature_type):
         display_cat_preview(df, encoding_choices, feature_choice, feature_values, use_defaults)
 
 def pre_process_data(df):
+    """Displays the pre-processing options and acts as a wrapper function"""
+
     df = load_df(curr_df=df)
+    #Display dataset sample without any summary and profiling report
     display_dataset_info(df, without_summary=True, profiling=False, subheader='Current Dataset:')
     options_available, option_description = st.columns([1,2])
+    #Get the info about NULL values as well as data types of all features
     missing_info, feature_type = get_feature_info(df)
 
     with options_available:
         options = ['', 'Fix Missing Values', 'Convert DataType', 'Handle Categorical Data']
         todo = st.radio('Options Available:', options)
 
+    #Execute the individual feature depending upon the user choice
     if todo == options[1]:
         with option_description:
             st.write("\n\n\n\n")

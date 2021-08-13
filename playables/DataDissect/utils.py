@@ -8,6 +8,7 @@ import pandas_profiling
 from streamlit_pandas_profiling import st_profile_report
 
 def parse_pandas_info(info):
+    "Convert raw pandas info strings to organized DataFrame"
     splits = info.split('\n')
     #Since the first and end parts consist of extra info about the dataset,
     # we store them separately and process the remaining data into a Pandas DataFrame
@@ -25,6 +26,7 @@ def parse_pandas_info(info):
     return info_df, basic_info, end_info
 
 def dataset_general_info(df):
+    "Convert the raw dataset info in an organized Pandas Df format"
     st.subheader('Dataset Features Info:')
 
     buf = io.StringIO()
@@ -35,10 +37,21 @@ def dataset_general_info(df):
     for info in footers:
         st.write("**_" + info + "_**")
 
-def get_dataset_profile_report(df):
-    return df.profile_report()
 
 def display_dataset_info(df, without_summary=False, profiling=False, subheader=None):
+    """
+    Displays the dataset info on the Landing Page after user uploads a datset
+
+    Args:
+    df (Pandas DataFrame)    : The uploaded dataset by the user
+    without_summary (Boolean): Flag whether to display summary or not
+    profiling (Boolean)      : Flag whether we need to generate the pandas profiling report
+    subheader (Boolean)      : Flag whether to display subheaders with summary or not
+
+    Returns:
+    Displays the dataset sample as well as either the summary or the profiling
+    report depending upon the arguments passed
+    """
     if subheader:
         st.subheader(subheader)
     else:
@@ -47,10 +60,21 @@ def display_dataset_info(df, without_summary=False, profiling=False, subheader=N
     #Since the df.info() prints directly to the console, so we are using an
     # IO buffer to store the output as a string which can further be converted into a Pandas DataFrame
     if profiling:
-        profile = get_dataset_profile_report(df)
+        profile = df.profile_report()
         st_profile_report(profile)
 
 def load_df(startup=False, initial_data=None, curr_df=None):
+    """
+    Loads the original/updated dataset on each streamlit run
+
+    Args:
+    startup (Boolean)          : Flag whether this is the first streamlit run
+    initial_data (Bytes Data)  : Initial uploaded dataset, to be used with startup=True
+    curr_df (Pandas DataFrame) : The current working df for successive runs
+
+    Returns:
+    (Pandas DataFrame)         : The new/updated df per the current streamlit run
+    """
     if startup:
         try:
             #Try reading the OG dataset from the uploaded file
@@ -105,6 +129,7 @@ def download_df(df):
     st.markdown(tmp_download_link, unsafe_allow_html=True)
 
 def clear_cache(warning=True):
+    """Clear the cache when the dataset is removed/replaced"""
     try:
         os.remove('new_df.pkl')
         st.experimental_rerun()
@@ -119,6 +144,7 @@ def calc_column_mode(df_col):
     return df_col.value_counts().index[0]
 
 def get_func_to_fill(method):
+    """Function to get the chosen numpy method from its name"""
     method = method.lower()
     if method in 'mean':
         return np.mean
@@ -128,6 +154,16 @@ def get_func_to_fill(method):
         return calc_column_mode
 
 def get_feature_info(df):
+    """
+    Returns the missing info dataframe as well as the data type for all features
+
+    Args:
+    df (Pandas DataFrame): The current DataFrame
+
+    Returns:
+    missing_info (Pandas DataFrame): Info of each feature and the no. of NULL values in it
+    feature_type (dict)            : Dictionary of numerical, categorical and boolean features
+    """
     missing_info = df.isnull().sum()
     num_features = list(df.select_dtypes(include='number').columns.values)
     cat_features = list(df.select_dtypes(include='object').columns.values)
@@ -137,6 +173,7 @@ def get_feature_info(df):
     return missing_info, feature_type
 
 def display_data_dissect_info():
+    """Renders the DataDissect Landing page and its components"""
     _, title_col, _ = st.columns([1,2,1])
     with title_col:
         st.title('Welcome to Data Dissect!')
