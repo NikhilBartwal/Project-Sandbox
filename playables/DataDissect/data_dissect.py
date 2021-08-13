@@ -10,7 +10,7 @@ from playables.DataDissect.utils import load_df, save_df
 from matplotlib import pyplot as plt
 
 def load_data_dissect():
-    welcome_container = st.beta_container()
+    welcome_container = st.container()
     file = st.file_uploader('Upload a csv dataset here (Max Size Limit: 150MBs)', type=['csv'])
     #Start the analysis only when the user has uploaded a dataset
     if file:

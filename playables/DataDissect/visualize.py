@@ -20,11 +20,11 @@ def visualize_data(df):
         display_visualization(df)
 
 def display_correlation(df):
-    _, subheader, _ = st.beta_columns([1,1,2])
+    _, subheader, _ = st.columns([1,1,2])
     with subheader:
         st.subheader('Data Correlation Heatmap')
 
-    heatmap_col, type_col = st.beta_columns([3,2])
+    heatmap_col, type_col = st.columns([3,2])
 
     with heatmap_col:
         fig, ax = plt.subplots()

@@ -44,7 +44,7 @@ def fix_missing_values_with(df, method, num_features=None, cat_features=None, bo
         #Enclose all the columns and their options in a form, so they can be processed together
         with st.form('Feature Choice Selection'):
             #Dynamic number of containers to hold each column and its options
-            feature_containers = st.beta_columns(len(columns_to_fill))
+            feature_containers = st.columns(len(columns_to_fill))
             for feature_ind, feature_name in enumerate(columns_to_fill):
                 with feature_containers[feature_ind]:
                     #Display column name and options in each container
@@ -116,7 +116,7 @@ def display_cat_preview(df, encoding_choices, feature_choice, feature_values, us
 
     with st.form('Categorical Encoding Preview'):
         for feature_name, feature_encoding in feature_choice.items():
-            feature_col, encoding_col = st.beta_columns(2)
+            feature_col, encoding_col = st.columns(2)
             feature_col.write(f'Feature Name: **{feature_name}**')
 
             if feature_encoding == encoding_choices[1]:
@@ -148,7 +148,7 @@ def get_custom_encodings(feature_values):
     custom_encoding_values = {}
 
     for value in feature_values:
-        value_name_col, custom_value_col, _ = st.beta_columns(3)
+        value_name_col, custom_value_col, _ = st.columns(3)
 
         value_name_col.write(f'Original value: **{value}**')
 

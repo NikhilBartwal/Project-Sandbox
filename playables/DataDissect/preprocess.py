@@ -7,9 +7,9 @@ from playables.DataDissect.preprocess_logic import update_custom_values, fix_mis
 from playables.DataDissect.preprocess_logic import convert_datatype_with, get_feature_types, get_cat_feature_values
 
 def fix_missing_values(df, missing_info, feature_type):
-    container = st.beta_container()
+    container = st.container()
     with container:
-        missing_col, fix_options_col = st.beta_columns(2)
+        missing_col, fix_options_col = st.columns(2)
 
     num_features, cat_features, bool_features = feature_type.values()
 
@@ -53,7 +53,7 @@ def convert_datatype(df, missing_info, feature_type):
 
     with st.form('Datatype Conversion Form'):
         for feature_name in all_features:
-            feature_container, type_container, convert_box = st.beta_columns(3)
+            feature_container, type_container, convert_box = st.columns(3)
             type = feature_types[feature_name]
             with feature_container:
                 st.write(f'Feature Name: **{feature_name}**')
@@ -99,7 +99,7 @@ def handle_categorical(df, feature_type):
     if first_screen:
         with placeholder.form('Handling Categorical'):
             for feature_name in cat_features:
-                feature_choice_col, feature_values_col = st.beta_columns(2)
+                feature_choice_col, feature_values_col = st.columns(2)
 
                 with feature_choice_col:
                     st.write(f'Feature Name: **{feature_name}**')
@@ -130,7 +130,7 @@ def handle_categorical(df, feature_type):
 def pre_process_data(df):
     df = load_df(curr_df=df)
     display_dataset_info(df, without_summary=True, profiling=False, subheader='Current Dataset:')
-    options_available, option_description = st.beta_columns([1,2])
+    options_available, option_description = st.columns([1,2])
     missing_info, feature_type = get_feature_info(df)
 
     with options_available:
