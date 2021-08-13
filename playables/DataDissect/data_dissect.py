@@ -21,6 +21,10 @@ def load_data_dissect():
 
         st.sidebar.subheader('Choose what to do with the dataset!')
         option = st.sidebar.selectbox('Please select one:', data_options, key='menu_select')
+        download_button = st.sidebar.button('Download Updated Dataset')
+
+        if download_button:
+            download_df(df)
 
         if option == data_options[0]:
             display_dataset_info(df, profiling=True)
